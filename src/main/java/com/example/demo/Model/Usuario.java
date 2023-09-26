@@ -18,8 +18,8 @@ public class Usuario {
 	private String nome;
 	private String email;
 	private String senha;
-	private String senhaSimetrica;
-	private String senhaAsimetrica;
+	private String senhasimetrica;
+	private String senhaasimetrica;
 	public int getId() {
 		return Id;
 	}
@@ -45,16 +45,16 @@ public class Usuario {
 		this.senha = senha;
 	}
 	public String getSenhaSimetrica() {
-		return senhaSimetrica;
+		return senhasimetrica;
 	}
-	public void setSenhaSimetrica(String senhaSimetrica) {
-		this.senhaSimetrica = senhaSimetrica;
+	public void setSenhaSimetrica(String senhasimetrica) {
+		this.senhasimetrica = senhasimetrica;
 	}
 	public String getSenhaAsimetrica() {
-		return senhaAsimetrica;
+		return senhaasimetrica;
 	}
-	public void setSenhaAsimetrica(String senhaAsimetrica) {
-		this.senhaAsimetrica = senhaAsimetrica;
+	public void setSenhaAsimetrica(String senhaasimetrica) {
+		this.senhaasimetrica = senhaasimetrica;
 	}
 	
 	

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+    <title>Tela de Registro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .register-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+
+        .register-container h2 {
+            font-size: 24px;
+            color: #007bff;
+        }
+
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .register-container input[type="text"],
+        .register-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .register-container input[type="submit"] {
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .register-container input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .register-container p {
+            margin-top: 10px;
+        }
+
+        .register-container a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Registro</h2>
+        
+            <input id="nome" type="text" placeholder="Nome Completo">
+            <input id="email" type="text" placeholder="Endereço de E-mail">
+            <input id="senha" type="password" placeholder="Senha">
+            <input id="" type="password" placeholder="Confirme a Senha">
+            <button id="registrar"  value="Registrar">Registrar </button>
+        
+        <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
+    </div>
+</body>
+<script>
+    $("#registrar").on("click",function(){
+        
+        var url = "http://localhost:8080/Usuario/CadastrarUsuario"
+        var obj  = {
+            "nome": $("#nome").val(),
+            "email": $("#email").val(),
+            "senha": $("#senha").val()
+        }
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: 'application/json', 
+            data: JSON.stringify(obj),
+            success: function(response){
+                if (response.status) {
+                    window.location.href = "<%= request.getContextPath() %>/" + response.redirectUrl;	
+                } else {
+                    window.location.href = "<%= request.getContextPath() %>/" + response.redirectUrl;
+                }
+             },
+             error: function(error) {
+                console.log(error)
+             }
+        });
+    })
+   
+</script>
+</html>
