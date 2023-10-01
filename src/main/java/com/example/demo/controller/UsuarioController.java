@@ -1,11 +1,16 @@
 package com.example.demo.controller;
 
 import java.security.KeyPair;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Optional;
 
 import javax.crypto.SecretKey;
 
+import org.hibernate.query.NativeQuery.ReturnProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +44,28 @@ public class UsuarioController {
         }
     }
     
+	@PostMapping("RealizarLogin")
+	private ResponseEntity<?> RealizarLogin(@RequestBody Usuario usuario) {
+		try {
+			byte[] senhaSimetricaCriptografada = CriptografiaUtil.criptografarSimetricamente(
+	                usuario.getSenha().getBytes(), chaveSimetrica);
+			usuario.setSenhaSimetrica(Base64.getEncoder().encodeToString(senhaSimetricaCriptografada));
+			Optional<Usuario> usuarioOptional = _usuarioRepository.findByEmail(usuario.getEmail());
+    		if (usuarioOptional.isPresent()) {
+				Usuario usuarioArmazenado = usuarioOptional.get();
+				if (Arrays.equals(senhaSimetricaCriptografada, Base64.getDecoder().decode(usuarioArmazenado.getSenhaSimetrica()))) {
+            		return ResponseEntity.ok(usuarioArmazenado);
+        		} else {
+        		    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+        		}
+			} else {
+					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+			}
+		} catch(Exception e) {
+			System.out.println(e);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+		}
+	}
 	@PostMapping("CadastrarUsuario")
 	private void CadastrarUsuario(@RequestBody Usuario usuario) {
 		 try {
