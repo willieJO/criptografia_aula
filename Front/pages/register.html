@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <title>Tela de Registro</title>
     <style>
         body {
@@ -78,14 +80,40 @@
             <input id="nome" type="text" placeholder="Nome Completo">
             <input id="email" type="text" placeholder="Endereço de E-mail">
             <input id="senha" type="password" placeholder="Senha">
-            <input id="" type="password" placeholder="Confirme a Senha">
+            <input id="confirm" type="password" placeholder="Confirme a Senha">
             <button id="registrar"  value="Registrar">Registrar </button>
         
         <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
     </div>
 </body>
 <script>
+    toastr.options = {
+        closeButton: true, 
+        progressBar: true, 
+        positionClass: "toast-top-right", 
+        timeOut: 1500 
+    };
     $("#registrar").on("click",function(){
+        if ($("#nome").val() =="") {
+            toastr.error("O campo nome é obrigatorio");
+            return;
+        }
+        if ($("#email").val() =="") {
+            toastr.error("O Campo e-mail é Obrigatório")
+            return;
+        }
+        if ($("#senha").val() =="") {
+            toastr.error("O Campo senha é Obrigatório")
+            return;
+        }
+        if ($("#confirm").val() =="") {
+            toastr.error("O Campo confirmar senha é Obrigatório")
+            return;
+        }
+        if ($("#senha").val() != $("#confirm").val() ) {
+            toastr.error("As senhas não são iguais");
+            return;
+        }
         
         var url = "http://localhost:8080/Usuario/CadastrarUsuario"
         var obj  = {
@@ -99,10 +127,13 @@
             contentType: 'application/json', 
             data: JSON.stringify(obj),
             success: function(response){
-                    window.location.href = "login.html";	
+                    toastr.success("Login realizado com sucesso. Você esta sendo redirecionado para a tela de login");
+                    setTimeout(function () {
+                        window.location.href = "login.html";
+                    }, 2000); // Ajuste o tempo de espera conforme necessário
              },
              error: function(error) {
-                console.log(error)
+                toastr.error("Email já registrado", "Conta");
              }
         });
     })

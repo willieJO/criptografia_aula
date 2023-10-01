@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,9 +21,26 @@ public class Usuario {
 	private String senha;
 	private String senhasimetrica;
 	private String senhaasimetrica;
+	
+    
+    public String getChave_privada() {
+		return privatekey;
+	}
+	public void setChave_privada(String chave_privada) {
+		this.privatekey = chave_privada;
+	}
+	private String privatekey;
+	private String publickey;
+	public String getChave_publica() {
+		return publickey;
+	}
+	public void setChave_publica(String chave_publica) {
+		this.publickey = chave_publica;
+	}
 	public int getId() {
 		return Id;
 	}
+	
 	public void setId(int id) {
 		Id = id;
 	}

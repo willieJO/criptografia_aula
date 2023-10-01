@@ -2,7 +2,12 @@ package com.example.demo.criptografia;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
+
 import java.security.*;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 public class CriptografiaUtil {
 
@@ -30,7 +35,7 @@ public class CriptografiaUtil {
     public static byte[] descriptografarSimetricamente(byte[] dadosCriptografados, SecretKey chave)
             throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
             BadPaddingException, NoSuchProviderException {
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding", "BC"); // Use o provedor Bouncy Castle
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding", "BC"); 
         cipher.init(Cipher.DECRYPT_MODE, chave);
         return cipher.doFinal(dadosCriptografados);
     }
@@ -40,6 +45,10 @@ public class CriptografiaUtil {
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC"); // Use o provedor Bouncy Castle
         keyGen.initialize(2048); // Tamanho da chave em bits (pode ser ajustado conforme necessário)
         return keyGen.generateKeyPair();
+    }
+    public static KeyFactory  gerarKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyFactory  keyGen = KeyFactory.getInstance("RSA", "BC"); // Use o provedor Bouncy Castle
+        return keyGen;
     }
 
     // Criptografar dados usando chave pública (RSA)
@@ -58,5 +67,34 @@ public class CriptografiaUtil {
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC"); // Use o provedor Bouncy Castle
         cipher.init(Cipher.DECRYPT_MODE, chavePrivada);
         return cipher.doFinal(dadosCriptografados);
+    }
+
+    // Para chaves asimetricas o que é necessario para descriptografar
+    public static String encodePrivateKey(PrivateKey privateKey) {
+        byte[] privateKeyBytes = privateKey.getEncoded();
+        return Base64.getEncoder().encodeToString(privateKeyBytes);
+    }
+    public static byte[] encrypt(byte[] data, PublicKey publicKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        return cipher.doFinal(data);
+    }
+    public static byte[] decrypt(byte[] encryptedData, PrivateKey privateKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        return cipher.doFinal(encryptedData);
+    }
+    public static PublicKey decodePublicKey(String publicKeyEncoded) throws Exception {
+        byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyEncoded);
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA", "BC");
+        return keyFactory.generatePublic(keySpec);
+    }
+
+    public static PrivateKey decodePrivateKey(String privateKeyEncoded) throws Exception {
+        byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyEncoded);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA", "BC");
+        return keyFactory.generatePrivate(keySpec);
     }
 }
